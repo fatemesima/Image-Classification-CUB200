@@ -1,23 +1,29 @@
-# EfficientNet on CUB-200-2011
+# Image-Classification-CUB200
 
-This repository trains **EfficientNet-B0** on the [CUB-200-2011](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) bird dataset.
+This project is an example of **Image Classification on the CUB-200-2011 dataset** using **Knowledge Distillation**.
 
-## Features
+---
 
-- Stage 1: Only train the fully-connected layer (`_fc`).
-- Stage 2: Unfreeze the entire EfficientNet backbone and continue training.
-- Logging with `logging` module.
-- TensorBoard support.
+## 🔹 Project Overview
 
-## Requirements
+1. **Teacher Model (EfficientNet-B4)**  
+   - Pretrained on ImageNet  
+   - Last fully connected layer modified for 200-class output  
+   - Trained to classify bird species in the CUB-200 dataset  
 
-- Python >= 3.10
-- PyTorch >= 2.1
-- torchvision
-- efficientnet_pytorch
-- TensorBoard
+2. **Student Model (EfficientNet-B0)**  
+   - Smaller and faster  
+   - Trained with **Knowledge Distillation** from the Teacher  
+   - Combines **Soft Target** (Teacher logits with Temperature) and **Hard Target** (ground truth labels)  
 
-## Usage
+3. **Distillation Loss**  
+```python
+Loss = alpha * KLDiv(Student_logits, Teacher_logits) + (1-alpha) * CrossEntropy(Student_logits, labels)
 
-```bash
-python train_efficientnet.py
+
+| Model           | Method                           | Validation Accuracy   |
+| --------------- | -------------------------------- | --------------------- |
+| EfficientNet-B0 | Standard Training                | 39%                   |
+| EfficientNet-B0 | Knowledge Distillation (from B4) | 68%                   |
+| EfficientNet-B4 | Teacher                          | 68%+ (train accuracy) |
+
